@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AuthContext from './AuthContext';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import auth from '../../fairebase/firebase.init';
 
 const AuthProvider = ({children}) => {
@@ -13,11 +13,39 @@ const AuthProvider = ({children}) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth,email,password);
  }
+   //for observer this ching this register user start>
+ useEffect( ()=>{
+  const unsubscribe =onAuthStateChanged(auth,currentUser =>{
+     setUser(currentUser);
+     console.log('state captured',currentUser)
+     setLoading(false);
+   }) 
+   return () =>{
+    unsubscribe();
+   }
+ } , [])
+   //for observer this ching this  user register end>
+
+   //for observer this ching this user signin start>
+  const signInUser =  (email,password)=>{
+    setLoading(true);
+    return signInWithEmailAndPassword(auth,email,password);
+  };
+    //for observer this ching this user signin end>
+ const SignOutUser = () =>{
+  setLoading(true);
+  return signOut(auth);
+ }
+      //for observer this ching this user signOut start>
+     
+       //for observer this ching this user signOut end>
 
     const authInfo = {
            user,
            loading,
-           createUser 
+           createUser,
+           signInUser,
+           SignOutUser 
     }
     return (
         <AuthContext.Provider value={authInfo}>
