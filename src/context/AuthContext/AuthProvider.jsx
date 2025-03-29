@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import AuthContext from './AuthContext';
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import auth from '../../fairebase/firebase.init';
+
+
+  //make a provider for google signin start 2
+const googleProvider = new GoogleAuthProvider();
+   //make a provider for google signin end 2
 
 const AuthProvider = ({children}) => {
     const [user,setUser] = useState(null);
@@ -31,8 +36,15 @@ const AuthProvider = ({children}) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth,email,password);
   };
+
+    //sign in with google start >
+   const signInWithGoogle = () =>{
+    setLoading(true);
+    return signInWithPopup(auth,googleProvider);
+   }
+    //sign in with google end >
     //for observer this ching this user signin end>
- const SignOutUser = () =>{
+  const SignOutUser = () =>{
   setLoading(true);
   return signOut(auth);
  }
@@ -45,7 +57,8 @@ const AuthProvider = ({children}) => {
            loading,
            createUser,
            signInUser,
-           SignOutUser 
+           SignOutUser,
+           signInWithGoogle,
     }
     return (
         <AuthContext.Provider value={authInfo}>
